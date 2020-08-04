@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div id="middle">
+		<article id="art_cle">
+			<img class="shrinkToFit" id="post_img" src="{{url_for('static',filename=post.post_img)}}" />
+			<div>
+				<div>
+					<div class="media"  id="display_profile_pic">
+						<img class="media-object pull-left" id="prof_pic" src="{{url_for('static',filename=post.author.profile_pic)}}"/><p><br/><a href="#"><b>{{post.author.username}}</b></a><br/>{{post.date_posted.strftime('%Y-%m-%d')}}</p>
+					</div>
+				</div>
+			</div>
+			<div class="post_content">
+				<p class="article-content" style="overflow-wrap: break-word;">{{ post.content }}</p>
+			</div>
+		</article>
+		<br/>
+		<h3>Comments</h3>
+		{% for comment in comments.items %}
+			<article id="art_cle">
+				<div>
+					<div>
+						<div class="media"  id="display_profile_pic">
+							<img class="media-object pull-left" id="prof_pic" src="{{url_for('static',filename=comment.author.profile_pic)}}"/><p><br/><a href="#"><b>{{comment.author.username}}</b></a><br/>{{comment.date_written.strftime('%Y-%m-%d')}}</p>
+						</div>
+					</div>
+				</div>
+				<div class="post_content">
+					<p class="article-content" style="overflow-wrap: break-word;">{{ comment.content }}</p>
+					<button class="open-button" onclick="openForm()">Options</button>
+				</div>
+			</article>
+
+			<br/>
+			<div class="form-popup" id="myForm">
+				<a class="btn btn-secondary btn-sm m-1" href="{{url_for('comment_update',post_id=post.id,comment_id=comment.id)}}">Update</a>
+				<form action="{{url_for('delete',option='comment',post_id=post.id)}}" method="POST">
+					<input class="btn btn-danger" type="submit" value="Delete">
+				</form>
+				<button type="button" class="btn cancel" onclick="closeForm()">Cancel</button>
+			</div>
+		{% endfor %}
+		{% for page_num in comments.iter_pages(left_edge=2,right_edge=2,left_current=2,right_current=2) %}
+			{% if page_num %}
+				{% if comments.page == page_num %}
+					<a class="btn btn-info mb-4" href="{{url_for('comments',post_id=post.id,page=page_num)}}">{{ page_num }}</a>
+				{% else %}
+					<a class="btn btn-outline-info mb-4" href="{{url_for('comments',post_id=post.id,page=page_num)}}">{{ page_num }}</a>
+				{% endif %}
+			{% else %}
+				...
+			{% endif %}
+		{% endfor %}
+	</div>
+{% endblock content %}

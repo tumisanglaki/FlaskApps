@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div id="middle">
+		{% for post in posts.items %}
+			<article id="art_cle" class="{{post.id}}">
+				<img class="shrinkToFit" id="post_img" src="{{url_for('static',filename=post.post_img)}}" />
+				<div>
+					<div>
+						<div class="media"  id="display_profile_pic">
+							<img class="media-object pull-left" id="prof_pic" src="{{url_for('static',filename=post.author.profile_pic)}}"/><p><br/><a href="#"><b><a class="mr-2" href="{{ url_for('user_posts',username=post.author.username) }}">{{ post.author.username }}</a></b></a><br/>{{post.date_posted.strftime('%Y-%m-%d')}}</p>
+						</div>
+						<h2><a class="article-title" href="{{url_for('post',post_id=post.id)}}">{{ post.title }}</a></h2>
+					</div>
+				</div>
+				
+					<p class="article-content" style="overflow-wrap: break-word;">{{ post.content }}</p>
+					<hr>
+					<p><a href="{{url_for('like_seen',post_id=post.id,user_id=current_user.id)}}"><i onclick="toggle_u_d(this)" name="{{class_like(post.id,current_user.id)}}" id="{{post.id}}" class="fa fa-thumbs-up"></i></a>Like</p><!-- Something Here -->
+				
+				<div>
+					<p><pre class="tab"><a href="{{url_for('comments',post_id=post.id)}}">{{num_comments(post.id)}} comment(s)</a>               <a href="{{url_for('comment', post_id=post.id,user_id=current_user.id,page_num=posts.page)}}">comment</a>               <i id="{{'l'+str(post.id)}}" class="likes">{{likes(post.id)}} Likes</i></pre></p>
+				</div>
+			</article>
+			<br/>
+		{% endfor %}
+		{% for page_num in posts.iter_pages(left_edge=2,right_edge=2,left_current=2,right_current=2) %}
+			{% if page_num %}
+				{% if posts.page == page_num %}
+					<a class="btn btn-info mb-4" href="{{url_for('home',page=page_num)}}">{{ page_num }}</a>
+				{% else %}
+					<a class="btn btn-outline-info mb-4" href="{{url_for('home',page=page_num)}}">{{ page_num }}</a>
+				{% endif %}
+			{% else %}
+				...
+			{% endif %}
+		{% endfor %}
+	</div>
+{% endblock content %}

@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div id="middle">
+		<div class="media"  id="display_profile_pic">
+			<img class="media-object pull-left" id="prof_pic_p" src="{{url_for('static',filename=author.profile_pic)}}"/>
+			<h1 class="mb-3">Posts by<br/> {{ user.username}} ({{posts.total}})</h1>
+		</div>
+		{% for post in posts.items %}
+			<article id="art_cle">
+				<img class="shrinkToFit" id="post_img" src="{{url_for('static',filename=post.post_img)}}" />
+				<p>{{post.date_posted.strftime('%Y-%m-%d')}}</p>
+				<div>
+					<div>
+						<div class="media"  id="display_profile_pic">
+							</div>
+						<h2><a class="article-title" href="{{url_for('post',post_id=post.id)}}">{{ post.title }}</a></h2>
+					</div>
+				</div>
+				<p class="article-content" style="overflow-wrap: break-word;">{{ post.content }}</p>
+				<hr>
+				<p><a href="{{url_for('like_seen',post_id=post.id,user_id=current_user.id)}}"><i onclick="toggle_u_d(this)" name="{{class_like(post.id,current_user.id)}}" id="{{post.id}}" class="fa fa-thumbs-up"></i></a>Like</p><!-- Something Here -->
+				<div>
+					<p><pre class="tab"><a href="{{url_for('comments',post_id=post.id)}}">{{num_comments(post.id)}} comment(s)</a>               <a href="{{url_for('comment', post_id=post.id,user_id=current_user.id,page_num=posts.page)}}">comment</a>               <i id="{{'l'+str(post.id)}}" class="likes">{{likes(post.id)}} Likes</i></pre></p>
+				</div>
+			</article>
+			<br/>
+		{% endfor %} 
+		{% for page_num in posts.iter_pages(left_edge=1, right_edge=1,left_current=1,right_current=2) %}
+			{% if page_num %}
+				{% if posts.page == page_num %}
+					<a class="btn btn-info mb-4" href="{{ url_for('user_posts',username=user.username,page=page_num) }}">{{ page_num }}</a>
+				{% else %}
+					<a class="btn btn-outline-info mb-4" href="{{ url_for('user_posts',username=user.username,page=page_num) }}">{{ page_num }}</a>
+				{% endif %}
+			{% else %}
+				...
+			{% endif %}
+		{% endfor %} 
+	</div>
+{% endblock content %} 
